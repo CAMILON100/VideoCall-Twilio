@@ -17,6 +17,11 @@ import useScreenShareParticipant from '../../hooks/useScreenShareParticipant/use
 import useTrack from '../../hooks/useTrack/useTrack';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 
+import Painterro from 'painterro';
+import $ from 'jquery';
+import './MainParticipantInfo.css';
+import { io } from 'socket.io-client';
+
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     position: 'relative',
@@ -25,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   identity: {
     background: 'rgba(0, 0, 0, 0.5)',
-    color: 'white',
+    color: 'red',
     padding: '0.1em 0.3em 0.1em 0',
     display: 'inline-flex',
     '& svg': {
@@ -36,7 +41,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   infoContainer: {
     position: 'absolute',
-    zIndex: 2,
     height: '100%',
     width: '100%',
   },
@@ -138,6 +142,47 @@ export default function MainParticipantInfo({ participant, children }: MainParti
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
   const isRecording = useIsRecording();
+  //var PainterroItem: typeof Painterro[] = [];
+  //var canvas: typeof Painterro[] = [];
+
+  console.log($('.ptro-holder-wrapper'));
+  console.log($('.ptro-holder-wrapper').length);
+  if ($('.ptro-holder-wrapper').length === 0) {
+    globalThis.canvas = Painterro({
+      backgroundFillColor: '#ffffff',
+      backgroundFillColorAlpha: 0.0,
+      defaultArrowLength: 8,
+      defaultLineWidth: 5,
+      defaultEraserWidth: 40,
+      defaultPrimitiveShadowOn: false,
+      hiddenTools: ['crop', 'text', 'rotate', 'resize', 'save', 'open', 'zoomin', 'zoomout'],
+      toolbarPosition: 'top',
+      backplateImgUrl: '',
+    });
+    console.log('canvas 1');
+    //console.log(PainterroItem);
+    console.log(globalThis.canvas);
+    //console.log('canvas 1 FN');
+  }
+
+  const socket = io('https://fitafter50.tk:8000');
+  socket.on('connect', () => {
+    console.log('conectó!');
+    console.log(socket);
+  });
+
+  const canvasId = (globalThis.canvas as any).id;
+  $('#' + canvasId).click(() => {
+    const canvasData = (globalThis.canvas as any).canvas.toDataURL();
+    console.log('W: ' + globalThis.canvasWidth + ' - H:' + globalThis.canvasHeight);
+    //console.log(canvasData);
+    let dataPrueba = socket.emit('drawing', {
+      size: $('#iframesize').outerHeight() / $('#iframesize').outerWidth(),
+      data: canvasData,
+    });
+    console.log(dataPrueba);
+    return false;
+  });
 
   return (
     <div
@@ -146,7 +191,32 @@ export default function MainParticipantInfo({ participant, children }: MainParti
       className={clsx(classes.container, {
         [classes.fullWidth]: !isRemoteParticipantScreenSharing,
       })}
+      ref={element => {
+        //console.log(participant.identity);
+        if (!element) return;
+
+        if (typeof globalThis.canvasWidth === 'undefined' || typeof globalThis.canvasHeight === 'undefined') {
+          console.log('Indefinido');
+          const canvas2 = (globalThis.canvas as any).show();
+          globalThis.canvasWidth = element.getBoundingClientRect().width;
+          globalThis.canvasHeight = element.getBoundingClientRect().height;
+        } else {
+          if (
+            element.getBoundingClientRect().width !== globalThis.canvasWidth ||
+            element.getBoundingClientRect().height !== globalThis.canvasHeight
+          ) {
+            console.log('w1: ' + element.getBoundingClientRect().width + ' - wg: ' + globalThis.canvasWidth);
+            console.log('h1: ' + element.getBoundingClientRect().height + ' - hg: ' + globalThis.canvasHeight);
+            const canvas2 = (globalThis.canvas as any).show();
+            canvas2.width = element.getBoundingClientRect().width;
+            canvas2.height = element.getBoundingClientRect().height;
+            globalThis.canvasWidth = element.getBoundingClientRect().width;
+            globalThis.canvasHeight = element.getBoundingClientRect().height;
+          }
+        }
+      }}
     >
+      <canvas id="pizarra" style={{ position: 'absolute', height: '100%', width: '100%' }}></canvas>
       <div className={classes.infoContainer}>
         <div style={{ display: 'flex' }}>
           <div className={classes.identity}>

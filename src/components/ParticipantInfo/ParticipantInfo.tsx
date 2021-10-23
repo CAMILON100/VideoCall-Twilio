@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { LocalAudioTrack, LocalVideoTrack, Participant, RemoteAudioTrack, RemoteVideoTrack } from 'twilio-video';
@@ -14,6 +14,10 @@ import useIsTrackSwitchedOff from '../../hooks/useIsTrackSwitchedOff/useIsTrackS
 import usePublications from '../../hooks/usePublications/usePublications';
 import useTrack from '../../hooks/useTrack/useTrack';
 import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
+
+import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+import useMainParticipant from '../../hooks/useMainParticipant/useMainParticipant';
+import useSelectedParticipant from '../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -138,7 +142,6 @@ interface ParticipantInfoProps {
 
 export default function ParticipantInfo({
   participant,
-  onClick,
   isSelected,
   children,
   isLocalParticipant,
@@ -159,6 +162,20 @@ export default function ParticipantInfo({
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
   const classes = useStyles();
+  const { room } = useVideoContext();
+  const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
+  const mainParticipant = useMainParticipant();
+
+  const onClick = () => {
+    console.log('Recibe el click en la vantana del usuario');
+    //console.log(' - wg: ' + globalThis.canvasWidth);
+    //console.log(' - hg: ' + globalThis.canvasHeight);
+    setSelectedParticipant(participant);
+    //console.log('Selected');
+    //console.log(selectedParticipant);
+    //console.log('Main');
+    //console.log(mainParticipant);
+  };
 
   return (
     <div

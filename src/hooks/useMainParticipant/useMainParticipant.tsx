@@ -15,5 +15,15 @@ export default function useMainParticipant() {
 
   // The participant that is returned is displayed in the main video area. Changing the order of the following
   // variables will change the how the main speaker is determined.
-  return selectedParticipant || remoteScreenShareParticipant || dominantSpeaker || participants[0] || localParticipant;
+  if (true) {
+    //console.log('Renderiza el Main Vid');
+    //console.log(selectedParticipant);
+    //console.log(localParticipant);
+    //console.log(participants);
+    return selectedParticipant || localParticipant || participants[0];
+  } else {
+    return (
+      selectedParticipant || remoteScreenShareParticipant || dominantSpeaker || participants[0] || localParticipant
+    );
+  }
 }

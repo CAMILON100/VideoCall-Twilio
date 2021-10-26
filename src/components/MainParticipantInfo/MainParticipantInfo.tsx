@@ -145,78 +145,104 @@ export default function MainParticipantInfo({ participant, children }: MainParti
   //var PainterroItem: typeof Painterro[] = [];
   //var canvas: typeof Painterro[] = [];
 
-  console.log($('.ptro-holder-wrapper'));
-  console.log($('.ptro-holder-wrapper').length);
-  if ($('.ptro-holder-wrapper').length === 0) {
-    globalThis.canvas = Painterro({
-      backgroundFillColor: '#ffffff',
-      backgroundFillColorAlpha: 0.0,
-      defaultArrowLength: 8,
-      defaultLineWidth: 5,
-      defaultEraserWidth: 40,
-      defaultPrimitiveShadowOn: false,
-      hiddenTools: ['crop', 'text', 'rotate', 'resize', 'save', 'open', 'zoomin', 'zoomout'],
-      toolbarPosition: 'top',
-      backplateImgUrl: '',
-    });
-    console.log('canvas 1');
-    //console.log(PainterroItem);
-    console.log(globalThis.canvas);
-    //console.log('canvas 1 FN');
-  }
+  const queryParams = new URLSearchParams(window.location.search);
+  const entrenador = queryParams.get('entrenador');
 
   const socket = io('https://fitafter50.tk:8000');
   socket.on('connect', () => {
-    console.log('conectó!');
-    console.log(socket);
+    //console.log('conectó!');
   });
+  if (entrenador === 'true') {
+    if ($('.ptro-holder-wrapper').length === 0) {
+      globalThis.canvas = Painterro({
+        backgroundFillColor: '#ffffff',
+        backgroundFillColorAlpha: 0.0,
+        defaultArrowLength: 8,
+        defaultLineWidth: 5,
+        defaultEraserWidth: 40,
+        defaultPrimitiveShadowOn: false,
+        hiddenTools: ['crop', 'rotate', 'resize', 'save', 'open', 'zoomin', 'zoomout'],
+        toolbarPosition: 'top',
+        backplateImgUrl: '',
+      });
+    }
 
-  const canvasId = (globalThis.canvas as any).id;
-  $('#' + canvasId).click(() => {
-    const canvasData = (globalThis.canvas as any).canvas.toDataURL();
-    console.log('W: ' + globalThis.canvasWidth + ' - H:' + globalThis.canvasHeight);
-    //console.log(canvasData);
-    let dataPrueba = socket.emit('drawing', {
-      size: $('#iframesize').outerHeight() / $('#iframesize').outerWidth(),
-      data: canvasData,
+    const canvasId = (globalThis.canvas as any).id;
+    $('#' + canvasId)[0].width = globalThis.canvasWidth;
+    $('#' + canvasId)[0].height = globalThis.canvasHeight;
+    $('#' + canvasId).css('width', globalThis.canvasWidth);
+    $('#' + canvasId).css('height', globalThis.canvasHeight);
+    $('#' + canvasId).click(() => {
+      const canvasData = (globalThis.canvas as any).canvas.toDataURL();
+      socket.emit('drawing', {
+        size: $('#iframesize').outerHeight() / $('#iframesize').outerWidth(),
+        data: canvasData,
+      });
+      return false;
     });
-    console.log(dataPrueba);
-    return false;
-  });
+  } else {
+    $('#pizarra').css('z-index', '1');
+    socket.on('drawing', function(msg) {
+      $('#pizarra')[0].getContext('2d');
+      const img = new Image();
+      img.src = msg.data;
+      img.onload = function() {
+        $('#pizarra')[0].width = globalThis.canvasWidth;
+        $('#pizarra')[0].height = globalThis.canvasHeight;
+        $('#pizarra')[0]
+          .getContext('2d')
+          .drawImage(
+            img,
+            0,
+            0,
+            globalThis.canvasWidth,
+            globalThis.canvasHeight,
+            0,
+            0,
+            globalThis.canvasWidth,
+            globalThis.canvasHeight
+          );
+      };
+    });
+  }
 
   return (
     <div
       data-cy-main-participant
       data-cy-participant={participant.identity}
+      id="div-main-participant"
       className={clsx(classes.container, {
         [classes.fullWidth]: !isRemoteParticipantScreenSharing,
       })}
       ref={element => {
-        //console.log(participant.identity);
         if (!element) return;
 
-        if (typeof globalThis.canvasWidth === 'undefined' || typeof globalThis.canvasHeight === 'undefined') {
-          console.log('Indefinido');
-          const canvas2 = (globalThis.canvas as any).show();
-          globalThis.canvasWidth = element.getBoundingClientRect().width;
-          globalThis.canvasHeight = element.getBoundingClientRect().height;
-        } else {
-          if (
-            element.getBoundingClientRect().width !== globalThis.canvasWidth ||
-            element.getBoundingClientRect().height !== globalThis.canvasHeight
-          ) {
-            console.log('w1: ' + element.getBoundingClientRect().width + ' - wg: ' + globalThis.canvasWidth);
-            console.log('h1: ' + element.getBoundingClientRect().height + ' - hg: ' + globalThis.canvasHeight);
+        if (entrenador === 'true') {
+          if (typeof globalThis.canvasWidth === 'undefined' || typeof globalThis.canvasHeight === 'undefined') {
             const canvas2 = (globalThis.canvas as any).show();
-            canvas2.width = element.getBoundingClientRect().width;
-            canvas2.height = element.getBoundingClientRect().height;
             globalThis.canvasWidth = element.getBoundingClientRect().width;
             globalThis.canvasHeight = element.getBoundingClientRect().height;
+          } else {
+            if (
+              element.getBoundingClientRect().width !== globalThis.canvasWidth ||
+              element.getBoundingClientRect().height !== globalThis.canvasHeight
+            ) {
+              console.log('w1: ' + element.getBoundingClientRect().width + ' - wg: ' + globalThis.canvasWidth);
+              console.log('h1: ' + element.getBoundingClientRect().height + ' - hg: ' + globalThis.canvasHeight);
+              const canvas2 = (globalThis.canvas as any).show();
+              canvas2.width = element.getBoundingClientRect().width;
+              canvas2.height = element.getBoundingClientRect().height;
+              globalThis.canvasWidth = element.getBoundingClientRect().width;
+              globalThis.canvasHeight = element.getBoundingClientRect().height;
+            }
           }
+        } else {
+          globalThis.canvasWidth = element.getBoundingClientRect().width;
+          globalThis.canvasHeight = element.getBoundingClientRect().height;
         }
       }}
     >
-      <canvas id="pizarra" style={{ position: 'absolute', height: '100%', width: '100%' }}></canvas>
+      <canvas id="pizarra" style={{ position: 'fixed', transform: 'scaleX(-1)' }}></canvas>
       <div className={classes.infoContainer}>
         <div style={{ display: 'flex' }}>
           <div className={classes.identity}>

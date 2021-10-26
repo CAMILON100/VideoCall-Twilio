@@ -15,12 +15,12 @@
 
 @media screen and (min-width: 869px) {
   .ptro-holder {
-    position: fixed;
-    left: 0px;
-    right: 0px;
-    top: 0px;
-    bottom: 0px;
-    box-shadow: 1px 1px 5px #8880;
+    position: fixed !important;
+    left: 0px !important;
+    right: 0px !important;
+    top: 0px !important;
+    bottom: 0px !important;
+    box-shadow: none !important;
   }
 }
 
@@ -134,10 +134,10 @@
 }
 
 .ptro-wrapper .ptro-substrate {
-  opacity: 0.3;
-  z-index: -1;
-  position: absolute;
-  background-image: none;
+  opacity: 0 !important;
+  z-index: -1 !important;
+  position: absolute !important;
+  background-image: none !important;
 }
 
 .ptro-wrapper .ptro-close-color-picker {

@@ -19,6 +19,9 @@ import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useMainParticipant from '../../hooks/useMainParticipant/useMainParticipant';
 import useSelectedParticipant from '../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 
+import $ from 'jquery';
+import { io } from 'socket.io-client';
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
@@ -166,16 +169,33 @@ export default function ParticipantInfo({
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
   const mainParticipant = useMainParticipant();
 
-  const onClick = () => {
-    console.log('Recibe el click en la vantana del usuario');
-    //console.log(' - wg: ' + globalThis.canvasWidth);
-    //console.log(' - hg: ' + globalThis.canvasHeight);
+  const queryParams = new URLSearchParams(window.location.search);
+  const entrenador = queryParams.get('entrenador');
+
+  if (typeof globalThis.socket == 'undefined') {
+    globalThis.socket = io('https://fitafter50.tk:8000');
+    globalThis.socket.on('connect', () => {
+      //console.log('conectó!');
+    });
+  }
+
+  const onClick = async () => {
+    if (entrenador === 'true' && room) {
+      let res = await emitir(participant.sid);
+    }
     setSelectedParticipant(participant);
-    //console.log('Selected');
-    //console.log(selectedParticipant);
-    //console.log('Main');
-    //console.log(mainParticipant);
   };
+
+  async function emitir(participantId: any) {
+    globalThis.socket.emit('drawing', {
+      room: room!.sid,
+      data: null,
+      requestSize: true,
+      participantId: participantId,
+      pizarraWidth: null,
+      pizarraHeight: null,
+    });
+  }
 
   return (
     <div

@@ -142,16 +142,19 @@ export default function MainParticipantInfo({ participant, children }: MainParti
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
   const isRecording = useIsRecording();
-  //var PainterroItem: typeof Painterro[] = [];
-  //var canvas: typeof Painterro[] = [];
 
   const queryParams = new URLSearchParams(window.location.search);
   const entrenador = queryParams.get('entrenador');
+  globalThis.contador = 0;
+  globalThis.auxDataCanvas = null;
 
-  const socket = io('https://fitafter50.tk:8000');
-  socket.on('connect', () => {
-    //console.log('conectó!');
-  });
+  if (typeof globalThis.socket == 'undefined') {
+    globalThis.socket = io('https://fitafter50.tk:8000');
+    globalThis.socket.on('connect', () => {
+      //console.log('conectó!');
+    });
+  }
+
   if (entrenador === 'true') {
     if ($('.ptro-holder-wrapper').length === 0) {
       globalThis.canvas = Painterro({
@@ -161,49 +164,115 @@ export default function MainParticipantInfo({ participant, children }: MainParti
         defaultLineWidth: 5,
         defaultEraserWidth: 40,
         defaultPrimitiveShadowOn: false,
-        hiddenTools: ['crop', 'rotate', 'resize', 'save', 'open', 'zoomin', 'zoomout'],
+        hiddenTools: ['crop', 'text', 'rotate', 'resize', 'save', 'open', 'zoomin', 'zoomout'],
         toolbarPosition: 'top',
         backplateImgUrl: '',
       });
-    }
 
-    const canvasId = (globalThis.canvas as any).id;
-    $('#' + canvasId)[0].width = globalThis.canvasWidth;
-    $('#' + canvasId)[0].height = globalThis.canvasHeight;
-    $('#' + canvasId).css('width', globalThis.canvasWidth);
-    $('#' + canvasId).css('height', globalThis.canvasHeight);
-    $('#' + canvasId).click(() => {
-      const canvasData = (globalThis.canvas as any).canvas.toDataURL();
-      socket.emit('drawing', {
-        size: $('#iframesize').outerHeight() / $('#iframesize').outerWidth(),
-        data: canvasData,
+      const canvasId = (globalThis.canvas as any).id;
+      $('#' + canvasId)[0].width = globalThis.canvasWidth;
+      $('#' + canvasId)[0].height = globalThis.canvasHeight;
+      $('#' + canvasId).css('width', globalThis.canvasWidth);
+      $('#' + canvasId).css('height', globalThis.canvasHeight);
+      $('#' + canvasId).click(() => {
+        const canvasData = (globalThis.canvas as any).canvas.toDataURL();
+        globalThis.socket.emit('drawing', {
+          room: room!.sid,
+          data: canvasData,
+          requestSize: false,
+          participantId: null,
+          pizarraWidth: null,
+          pizarraHeight: null,
+        });
+        return false;
       });
-      return false;
-    });
+    }
   } else {
     $('#pizarra').css('z-index', '1');
-    socket.on('drawing', function(msg) {
-      $('#pizarra')[0].getContext('2d');
-      const img = new Image();
-      img.src = msg.data;
-      img.onload = function() {
-        $('#pizarra')[0].width = globalThis.canvasWidth;
-        $('#pizarra')[0].height = globalThis.canvasHeight;
-        $('#pizarra')[0]
-          .getContext('2d')
-          .drawImage(
-            img,
-            0,
-            0,
-            globalThis.canvasWidth,
-            globalThis.canvasHeight,
-            0,
-            0,
-            globalThis.canvasWidth,
-            globalThis.canvasHeight
-          );
-      };
+  }
+
+  if (globalThis.contador == 0) {
+    globalThis.socket.on('drawing', function(msg: any) {
+      if (msg.room == room!.sid) {
+        if (entrenador === 'true') {
+          const canvas2 = (globalThis.canvas as any).canvas;
+          if (
+            msg.pizarraWidth &&
+            msg.pizarraHeight &&
+            (canvas2.width != msg.pizarraWidth || canvas2.height != msg.pizarraHeight)
+          ) {
+            let left: any = ($('.ptro-center-tablecell').width() - msg.pizarraWidth) / 2;
+            canvas2.height = msg.pizarraHeight;
+            canvas2.width = msg.pizarraWidth;
+            $('.ptro-holder-wrapper canvas').css({
+              position: 'absolute',
+              margin: 'auto',
+              top: '0',
+              left: left + 'px',
+            });
+            $('.ptro-crp-el').css({
+              position: 'absolute',
+              height: msg.pizarraHeight + 'px',
+              width: msg.pizarraWidth + 'px',
+              margin: 'auto',
+              top: '0',
+              left: left + 'px',
+            });
+            $('#div-main-participant').css({
+              position: 'absolute',
+              height: msg.pizarraHeight + 'px',
+              width: msg.pizarraWidth + 'px',
+              margin: 'auto',
+              top: '0',
+              left: left + 'px',
+            });
+            $('.ptro-info')
+              .empty()
+              .html(msg.pizarraWidth + '<span>x</span>' + msg.pizarraHeight + '<br>png');
+          } else {
+            return false;
+          }
+        } else {
+          if (msg.requestSize === true && localParticipant!.sid == msg.participantId) {
+            let pizarraWidth: any = $('#pizarra')[0].width;
+            let pizarraHeight: any = $('#pizarra')[0].height;
+            globalThis.socket.emit('drawing', {
+              room: room!.sid,
+              data: null,
+              requestSize: false,
+              participantId: null,
+              pizarraWidth: pizarraWidth,
+              pizarraHeight: pizarraHeight,
+            });
+          } else {
+            if (msg.data && globalThis.auxDataCanvas != msg.data) {
+              globalThis.auxDataCanvas = msg.data;
+              $('#pizarra')[0].getContext('2d');
+              const img = new Image();
+              img.src = msg.data;
+              img.onload = function() {
+                $('#pizarra')[0].width = globalThis.canvasWidth;
+                $('#pizarra')[0].height = globalThis.canvasHeight;
+                $('#pizarra')[0]
+                  .getContext('2d')
+                  .drawImage(
+                    img,
+                    0,
+                    0,
+                    globalThis.canvasWidth,
+                    globalThis.canvasHeight,
+                    0,
+                    0,
+                    globalThis.canvasWidth,
+                    globalThis.canvasHeight
+                  );
+              };
+            }
+          }
+        }
+      }
     });
+    globalThis.contador++;
   }
 
   return (
@@ -227,8 +296,6 @@ export default function MainParticipantInfo({ participant, children }: MainParti
               element.getBoundingClientRect().width !== globalThis.canvasWidth ||
               element.getBoundingClientRect().height !== globalThis.canvasHeight
             ) {
-              console.log('w1: ' + element.getBoundingClientRect().width + ' - wg: ' + globalThis.canvasWidth);
-              console.log('h1: ' + element.getBoundingClientRect().height + ' - hg: ' + globalThis.canvasHeight);
               const canvas2 = (globalThis.canvas as any).show();
               canvas2.width = element.getBoundingClientRect().width;
               canvas2.height = element.getBoundingClientRect().height;
@@ -239,6 +306,10 @@ export default function MainParticipantInfo({ participant, children }: MainParti
         } else {
           globalThis.canvasWidth = element.getBoundingClientRect().width;
           globalThis.canvasHeight = element.getBoundingClientRect().height;
+          if (globalThis.canvasWidth != $('#pizarra')[0].width || globalThis.canvasHeight != $('#pizarra')[0].height) {
+            $('#pizarra')[0].width = globalThis.canvasWidth;
+            $('#pizarra')[0].height = globalThis.canvasHeight;
+          }
         }
       }}
     >

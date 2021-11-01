@@ -130,7 +130,9 @@
 }
 
 .ptro-wrapper .ptro-crp-el {
-  position: absolute;
+  position: fixed;
+  margin: auto;
+  display: inline-block;
 }
 
 .ptro-wrapper .ptro-substrate {

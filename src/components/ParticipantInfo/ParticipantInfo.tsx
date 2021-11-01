@@ -182,16 +182,18 @@ export default function ParticipantInfo({
   const onClick = async () => {
     if (entrenador === 'true' && room) {
       let res = await emitir(participant.sid);
+      globalThis.canvas.show();
     }
     setSelectedParticipant(participant);
+    globalThis.selectedSid = participant.sid;
   };
 
   async function emitir(participantId: any) {
     globalThis.socket.emit('drawing', {
       room: room!.sid,
+      participantId: participantId,
       data: null,
       requestSize: true,
-      participantId: participantId,
       pizarraWidth: null,
       pizarraHeight: null,
     });

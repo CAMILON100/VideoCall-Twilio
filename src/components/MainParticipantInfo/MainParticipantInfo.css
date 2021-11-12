@@ -10,6 +10,7 @@
 }
 
 .ptro-bar {
+  background-color: transparent !important;
   z-index: 999 !important;
 }
 
@@ -89,6 +90,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-left: 3px !important;
+  margin-right: 3px !important;
+  border-radius: 50%;
 }
 
 .ptro-icon-btn i {
@@ -153,6 +157,12 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
+  height: 40px;
+  background-color: white;
+  margin: 0 3px !important;
+  padding: 0 15px !important;
+  border-radius: 40px;
+  box-shadow: 0px 0px 3px 1px #bbb;
 }
 
 .ptro-wrapper .ptro-crp-rect {
@@ -248,6 +258,11 @@
   -webkit-user-drag: none;
   user-drag: none;
   -webkit-touch-callout: none;
+  background-color: transparent !important;
+}
+
+.ptro-tool-controls:first(.ptro-tool-ctl-name) {
+  margin-left: 0 !important;
 }
 
 .ptro-bar > div {
@@ -631,6 +646,12 @@ span.mce_painterro:before {
 td.ptro-strict-cell {
   font-size: 8px;
   line-height: normal;
+}
+
+.ptro-info {
+  color: white;
+  letter-spacing: 1px;
+  font-size: 11px;
 }
 
 @media screen and (max-width: 960px) {

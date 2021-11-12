@@ -170,8 +170,15 @@ export default function MainParticipantInfo({ participant, children }: MainParti
         hiddenTools: ['crop', 'text', 'rotate', 'resize', 'save', 'open', 'zoomin', 'zoomout'],
         toolbarPosition: 'top',
         backplateImgUrl: '',
+        buttonSizePx: 40,
+        toolbarHeightPx: 50,
       });
       globalThis.canvas.show();
+      $(globalThis.canvas.canvas).css({
+        position: 'absolute',
+        left: '0px',
+        top: '0px',
+      });
 
       const canvasId = globalThis.canvas.id;
       $('#' + canvasId)[0].width = globalThis.canvasWidth;

@@ -6,6 +6,7 @@ import TwilioLogo from './TwilioLogo';
 import { useAppState } from '../../state';
 import UserMenu from './UserMenu/UserMenu';
 import { useLocation } from 'react-router-dom';
+import logo from './../../images/Fit_After_50_Logo.svg';
 
 const useStyles = makeStyles((theme: Theme) => ({
   background: {
@@ -14,6 +15,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'center',
     background: 'rgb(40, 42, 43)',
     height: '100%',
+    backgroundImage: 'url(https://fitafter50.ca/images/sampledata/icetheme/showcase.jpg)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   },
   container: {
     position: 'relative',
@@ -87,6 +91,12 @@ const useStyles = makeStyles((theme: Theme) => ({
       fontSize: '1.1rem',
     },
   },
+  logoFitAfter: {
+    [theme.breakpoints.down('sm')]: {
+      height: '90px',
+      margin: 'auto',
+    },
+  },
 }));
 
 interface IntroContainerProps {
@@ -100,16 +110,12 @@ const IntroContainer = (props: IntroContainerProps) => {
 
   return (
     <div className={classes.background}>
-      <TwilioLogo className={classes.twilioLogo} />
       {user && location.pathname !== '/login' && <UserMenu />}
       <div className={classes.container}>
         <div className={classes.innerContainer}>
           <div className={classes.swooshContainer}>
             <div className={classes.logoContainer}>
-              <VideoLogo />
-              <Typography variant="h6" className={classes.title}>
-                Twilio Programmable Video
-              </Typography>
+              <img src={logo} className={classes.logoFitAfter} />
             </div>
           </div>
           <div className={classes.content}>{props.children}</div>

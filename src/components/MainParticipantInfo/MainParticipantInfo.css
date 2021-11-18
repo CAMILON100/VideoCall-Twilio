@@ -664,3 +664,51 @@ td.ptro-strict-cell {
     top: 52px !important;
   }
 }
+
+@media screen and (min-width: 772px) {
+  .ptro-bar {
+    counter-reset: button;
+  }
+
+  .ptro-bar > div {
+    overflow: visible;
+  }
+
+  .ptro-icon-btn:nth-child(2) {
+    transform: translate(-46px, 46px) !important;
+  }
+  .ptro-icon-btn:nth-child(3) {
+    transform: translate(-92px, 92px) !important;
+  }
+  .ptro-icon-btn:nth-child(4) {
+    transform: translate(-138px, 138px) !important;
+  }
+  .ptro-icon-btn:nth-child(5) {
+    transform: translate(-184px, 184px) !important;
+  }
+  .ptro-icon-btn:nth-child(6) {
+    transform: translate(-230px, 230px) !important;
+  }
+  .ptro-icon-btn:nth-child(7) {
+    transform: translate(-276px, 276px) !important;
+  }
+  .ptro-icon-btn:nth-child(8) {
+    transform: translate(-322px, 322px) !important;
+  }
+  .ptro-icon-btn:nth-child(9) {
+    transform: translate(-368px, 368px) !important;
+  }
+  .ptro-icon-btn:nth-child(10) {
+    transform: translate(-414px, 414px) !important;
+  }
+  .ptro-icon-btn:nth-child(11) {
+    transform: translate(-460px, 460px) !important;
+  }
+
+  .ptro-tool-controls {
+    transform: translateX(-460px);
+  }
+  .ptro-tool-controls:empty {
+    display: none;
+  }
+}

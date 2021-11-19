@@ -671,7 +671,7 @@ td.ptro-strict-cell {
   }
 
   .ptro-bar > div {
-    overflow: visible;
+    overflow: visible !important;
   }
 
   .ptro-icon-btn:nth-child(2) {

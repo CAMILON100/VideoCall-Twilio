@@ -152,7 +152,7 @@ export default function MainParticipantInfo({ participant, children }: MainParti
   globalThis.auxDataCanvas = null;
 
   if (typeof globalThis.socket == 'undefined') {
-    globalThis.socket = io('https://fitafter50.tk:8000');
+    globalThis.socket = io('https://fitafter50.ml:8000');
     globalThis.socket.on('connect', () => {
       //console.log('conectó!');
     });

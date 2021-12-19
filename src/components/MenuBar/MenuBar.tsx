@@ -1,22 +1,24 @@
 import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import AvatarIcon from '../../icons/AvatarIcon';
 
 import Button from '@material-ui/core/Button';
-import EndCallButton from '../Buttons/EndCallButton/EndCallButton';
+import EndCallButtonIcon from '../Buttons/EndCallButton/EndCallButtonIcon';
 import { isMobile } from '../../utils';
 import Menu from './Menu/Menu';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { Typography, Grid, Hidden } from '@material-ui/core';
-import ToggleAudioButton from '../Buttons/ToggleAudioButton/ToggleAudioButton';
-import ToggleChatButton from '../Buttons/ToggleChatButton/ToggleChatButton';
-import ToggleVideoButton from '../Buttons/ToggleVideoButton/ToggleVideoButton';
+import ToggleAudioButtonIcon from '../Buttons/ToggleAudioButton/ToggleAudioButtonIcon';
+import ToggleChatButtonIcon from '../Buttons/ToggleChatButton/ToggleChatButtonIcon';
+import ToggleVideoButtonIcon from '../Buttons/ToggleVideoButton/ToggleVideoButtonIcon';
+import ToggleParticipantsButtonIcon from '../Buttons/ToggleParticipantsButton/ToggleParticipantsButtonIcon';
 import ToggleScreenShareButton from '../Buttons/ToogleScreenShareButton/ToggleScreenShareButton';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      backgroundColor: theme.palette.background.default,
+      backgroundColor: 'transparent',
       bottom: 0,
       left: 0,
       right: 0,
@@ -29,6 +31,15 @@ const useStyles = makeStyles((theme: Theme) =>
         height: `${theme.mobileFooterHeight}px`,
         padding: 0,
       },
+    },
+    border: {
+      background: 'transparent',
+      width: '200px',
+      position: 'absolute',
+      height: '160px',
+      border: 'solid 1px white',
+      borderRadius: '50%',
+      bottom: '-110px',
     },
     screenShareBanner: {
       position: 'fixed',
@@ -78,18 +89,24 @@ export default function MenuBar() {
         </Grid>
       )}
       <footer className={classes.container}>
-        <Grid container justifyContent="space-around" alignItems="center">
-          <Hidden smDown>
+        <Grid container justifyContent="center" alignItems="center">
+          <ToggleAudioButtonIcon disabled={isReconnecting} />
+          <ToggleVideoButtonIcon disabled={isReconnecting} />
+          {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButtonIcon />}
+          <ToggleParticipantsButtonIcon />
+          <EndCallButtonIcon />
+          <div className={classes.border}></div>
+          {/* <Hidden smDown>
             <Grid style={{ flex: 1 }}>
               <Typography variant="body1">{room!.name}</Typography>
             </Grid>
           </Hidden>
           <Grid item>
             <Grid container justifyContent="center">
-              <ToggleAudioButton disabled={isReconnecting} />
-              <ToggleVideoButton disabled={isReconnecting} />
+              <ToggleAudioButtonIcon disabled={isReconnecting} />
+              <ToggleVideoButtonIcon disabled={isReconnecting} />
               {!isSharingScreen && !isMobile && <ToggleScreenShareButton disabled={isReconnecting} />}
-              {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
+              {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButtonIcon />}
               <Hidden smDown>
                 <Menu />
               </Hidden>
@@ -98,10 +115,10 @@ export default function MenuBar() {
           <Hidden smDown>
             <Grid style={{ flex: 1 }}>
               <Grid container justifyContent="flex-end">
-                <EndCallButton />
+                <EndCallButtonIcon />
               </Grid>
             </Grid>
-          </Hidden>
+          </Hidden> */}
         </Grid>
       </footer>
     </>

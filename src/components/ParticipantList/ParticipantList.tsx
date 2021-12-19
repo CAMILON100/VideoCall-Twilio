@@ -55,6 +55,7 @@ export default function ParticipantList() {
 
   return (
     <aside
+      id="participant-list"
       className={clsx(classes.container, {
         [classes.transparentBackground]: !isRemoteParticipantScreenSharing,
       })}

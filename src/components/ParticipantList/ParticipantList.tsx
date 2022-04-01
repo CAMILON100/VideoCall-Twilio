@@ -15,6 +15,8 @@ const useStyles = makeStyles((theme: Theme) =>
       background: 'rgb(79, 83, 85)',
       gridArea: '1 / 2 / 1 / 3',
       zIndex: 5,
+      display: 'flex',
+      flexDirection: 'column-reverse',
       [theme.breakpoints.down('sm')]: {
         gridArea: '2 / 1 / 3 / 3',
         overflowY: 'initial',
@@ -31,7 +33,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     innerScrollContainer: {
       width: `calc(${theme.sidebarWidth}px - 3em)`,
-      padding: '1.5em 0',
+      padding: '3em 0',
+      display: 'flex',
       [theme.breakpoints.down('sm')]: {
         width: 'auto',
         padding: `${theme.sidebarMobilePadding}px`,

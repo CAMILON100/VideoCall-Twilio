@@ -29,6 +29,8 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       height: 0,
+      width: '100%',
+      transform: 'scale(0.9)',
       overflow: 'hidden',
       marginBottom: '0.5em',
       '& video': {

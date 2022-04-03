@@ -17,11 +17,16 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: 5,
       display: 'flex',
       flexDirection: 'column-reverse',
+      position: 'absolute',
+      bottom: '0',
       [theme.breakpoints.down('sm')]: {
-        gridArea: '2 / 1 / 3 / 3',
+        gridArea: '1 / 1 / 2 / 3',
         overflowY: 'initial',
         overflowX: 'auto',
         display: 'flex',
+        position: 'initial',
+        flexDirection: 'row',
+        height: '90vh',
       },
     },
     transparentBackground: {
@@ -36,7 +41,8 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '3em 0',
       display: 'flex',
       [theme.breakpoints.down('sm')]: {
-        width: 'auto',
+        width: '300px',
+        alignItems: 'flex-end',
         padding: `${theme.sidebarMobilePadding}px`,
         display: 'flex',
       },

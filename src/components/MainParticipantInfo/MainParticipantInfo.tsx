@@ -23,6 +23,7 @@ import $ from 'jquery';
 import './MainParticipantInfo.css';
 import { io } from 'socket.io-client';
 import { AutorenewTwoTone } from '@material-ui/icons';
+import ClearTable from '../Buttons/ClearTable';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -157,6 +158,18 @@ export default function MainParticipantInfo({ participant, children }: MainParti
       //console.log('conectó!');
     });
   }
+
+  const clearTable = () => {
+    globalThis.socket.emit('drawing', {
+      room: room!.sid,
+      participantId: globalThis.selectedSid,
+      data: null,
+      requestSize: false,
+      pizarraWidth: null,
+      pizarraHeight: null,
+    });
+    globalThis.canvas.show();
+  };
 
   if (entrenador === 'true') {
     if ($('.ptro-holder-wrapper').length === 0) {
@@ -321,6 +334,7 @@ export default function MainParticipantInfo({ participant, children }: MainParti
       }}
     >
       <canvas id="pizarra" style={{ position: 'fixed', transform: 'scaleX(-1)' }}></canvas>
+      <ClearTable onClick={() => clearTable()} />
       <div className={classes.infoContainer}>
         <div style={{ display: 'flex' }}>
           <div className={classes.identity}>

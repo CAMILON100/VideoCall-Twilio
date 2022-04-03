@@ -199,6 +199,7 @@ export default function ParticipantInfo({
       pizarraWidth: null,
       pizarraHeight: null,
     });
+    globalThis.canvas.show();
   }
 
   return (
